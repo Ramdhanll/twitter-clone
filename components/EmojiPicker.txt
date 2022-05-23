@@ -1,0 +1,24 @@
+// import React, { useEffect, useRef } from 'react'
+
+// import data from '@emoji-mart/data'
+// import { Picker } from 'emoji-mart'
+// import { render } from 'react-dom'
+
+// function EmojiPicker(props: any) {
+//    const ref = useRef(null)
+
+//    useEffect(() => {
+//       if (window !== undefined) {
+//          new Picker({ ...props, data, ref })
+//       }
+//    }, [])
+
+//    return <div ref={ref} />
+// }
+
+// // render(
+// //    <EmojiPicker onEmojiSelect={console.log} />,
+// //    document.querySelector('#picker')
+// // )
+
+// export default EmojiPicker
