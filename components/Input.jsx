@@ -15,8 +15,10 @@ import {
 } from '@firebase/firestore'
 import { getDownloadURL, ref, uploadString } from '@firebase/storage'
 import React, { useEffect, useRef, useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 const Input = (props) => {
+   const { data: session } = useSession()
    const [input, setInput] = useState('')
    const [selectedFile, setSelectedFile] = useState(null)
    const [showEmojis, setShowEmojis] = useState(false)
@@ -45,6 +47,10 @@ const Input = (props) => {
       setLoading(true)
 
       const docRef = await addDoc(collection(db, 'posts'), {
+         id: session.user.uid,
+         username: session.user.name,
+         userImg: session.user.image,
+         tag: session.user.tag,
          text: input,
          timestamp: serverTimestamp(),
       })
@@ -75,7 +81,7 @@ const Input = (props) => {
          }`}
       >
          <img
-            src='https://media.istockphoto.com/photos/shot-of-a-female-mechanic-talking-on-her-cellphone-while-working-in-picture-id1342082733?s=612x612'
+            src={session.user.image}
             className='h-11 w-11 rounded-full cursor-pointer'
          />
 
