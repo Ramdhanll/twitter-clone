@@ -6,9 +6,14 @@ import Sidebar from '../components/Sidebar'
 import styles from '../styles/Home.module.css'
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import Login from '../components/Login'
+import Modal from '../components/Modal'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { modalState } from '../atoms/modalAtom'
+import Widgets from '../components/Widgets'
 
 const Home: NextPage = ({ trendingResults, followResults, providers }: any) => {
    const { data: session } = useSession()
+   const [isOpen, setIsOpen] = useRecoilState(modalState)
 
    if (!session) return <Login providers={providers} />
 
@@ -22,8 +27,12 @@ const Home: NextPage = ({ trendingResults, followResults, providers }: any) => {
             <Sidebar />
             <Feed />
             {/* Widgets */}
+            <Widgets
+               trendingResults={trendingResults}
+               followResults={followResults}
+            />
 
-            {/* Modal */}
+            {isOpen && <Modal />}
          </main>
       </div>
    )

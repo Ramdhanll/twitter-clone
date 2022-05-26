@@ -17,6 +17,8 @@ import {
    deleteField,
    doc,
    onSnapshot,
+   orderBy,
+   query,
    setDoc,
    updateDoc,
 } from 'firebase/firestore'
@@ -40,7 +42,7 @@ const Post = ({ id, post, postPage = false }: Props) => {
 
    const [isOpen, setIsOpen] = useRecoilState(modalState)
    const [postId, setPostId] = useRecoilState(postIdState)
-   const [comments, setComments] = useState([])
+   const [comments, setComments] = useState<any>([])
    const [likes, setLikes] = useState<any>([])
    const [liked, setLiked] = useState(false)
 
@@ -48,6 +50,20 @@ const Post = ({ id, post, postPage = false }: Props) => {
       () =>
          onSnapshot(collection(db, 'posts', id, 'likes'), (snapshot) =>
             setLikes(snapshot.docs)
+         ),
+      [db, id]
+   )
+
+   useEffect(
+      () =>
+         onSnapshot(
+            query(
+               collection(db, 'posts', id, 'comments'),
+               orderBy('timestamp', 'desc')
+            ),
+            (snapshot) => {
+               setComments(snapshot.docs)
+            }
          ),
       [db, id]
    )
@@ -88,14 +104,14 @@ const Post = ({ id, post, postPage = false }: Props) => {
          onClick={() => router.push(`/${id}`)}
       >
          {!postPage && (
-            <img src={post.userImg} className='h-11 w-11 rounded-full mr-4' />
+            <img src={post?.userImg} className='h-11 w-11 rounded-full mr-4' />
          )}
 
          <div className='flex flex-col space-y-2 w-full'>
             <div className={`flex ${!postPage && 'justify-between'}`}>
                {postPage && (
                   <img
-                     src={post.userImg}
+                     src={post?.userImg}
                      className='h-11 w-11 rounded-full mr-4'
                      alt='Profile pic'
                   />
@@ -107,23 +123,25 @@ const Post = ({ id, post, postPage = false }: Props) => {
                            !postPage && 'inline-block'
                         }`}
                      >
-                        {post.username}
+                        {post?.username}
                      </h4>
                      <span
                         className={`text-sm sm:text-[15px] ${
                            !postPage && 'ml-1.5'
                         }`}
                      >
-                        @{post.tag}
+                        @{post?.tag}
                      </span>
                   </div>{' '}
                   ·{' '}
                   <span className='hover:underline text-sm sm:text-[15px]'>
-                     <Moment fromNow>{post?.timestamp?.toDate()}</Moment>
+                     {post?.timestamp && (
+                        <Moment fromNow>{post?.timestamp?.toDate()}</Moment>
+                     )}
                   </span>
                   {!postPage && (
                      <p className='text-[#d9d9d9] text-[15px] sm:text-base mt-0.5'>
-                        {post.text}
+                        {post?.text}
                      </p>
                   )}
                </div>
